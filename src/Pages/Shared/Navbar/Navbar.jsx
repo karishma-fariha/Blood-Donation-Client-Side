@@ -33,6 +33,7 @@ const Navbar = () => {
             <div className="navbar-end gap-2">
                 <img className='md:w-10 w-7 md:h-10 h-7 rounded-full' src={userImg} alt="" />
                 <button className="btn">Login</button>
+                
             </div>
         </div>
     );
