@@ -2,6 +2,7 @@ import React from 'react';
 import Logo from '../../../Components/Logo/Logo';
 import { NavLink } from 'react-router';
 import userImg from '../../../assets/user.png';
+import ThemeToggle from '../../../Components/ThemeToggle';
 
 const Navbar = () => {
     const links = <>
@@ -32,8 +33,8 @@ const Navbar = () => {
             </div>
             <div className="navbar-end gap-2">
                 <img className='md:w-10 w-7 md:h-10 h-7 rounded-full' src={userImg} alt="" />
-                <button className="btn">Login</button>
-                
+                <button className="btn btn-primary">Login</button>
+                <ThemeToggle></ThemeToggle>
             </div>
         </div>
     );
