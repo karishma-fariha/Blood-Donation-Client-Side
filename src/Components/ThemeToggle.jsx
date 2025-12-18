@@ -25,10 +25,10 @@ export default function ThemeToggle() {
       />
 
       {/* Light mode icon */}
-      <FiSun className="swap-on" />
+      <FiSun size={30} className="swap-on" />
 
       {/* Dark mode icon */}
-      <FiMoon className="swap-off" />
+      <FiMoon size={30} className="swap-off" />
     </label>
   );
 }
