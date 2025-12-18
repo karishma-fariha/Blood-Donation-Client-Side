@@ -3,6 +3,7 @@ import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 const ContactUs = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -11,9 +12,15 @@ const ContactUs = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
         //backend API will include later
         console.log("Form Submitted:", formData);
         toast("Thank you! Your message has been sent.");
+        setFormData({
+            name: '',
+            email: '',
+            message: ''
+        });
     };
 
     const handleChange = (e) => {
@@ -23,7 +30,7 @@ const ContactUs = () => {
     return (
         <section className="py-20 bg-white" id="contact">
             <div className="container mx-auto px-4">
-                
+
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-800">Get In Touch</h2>
                     <p className="text-gray-500 mt-4">Have questions? We're here to help you save lives.</p>
@@ -31,7 +38,7 @@ const ContactUs = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
-                   
+
                     <div className="bg-secondary rounded-2xl p-8 md:p-12 text-white">
                         <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
                         <p className="mb-8 opacity-90">
@@ -59,11 +66,11 @@ const ContactUs = () => {
                             </div>
                         </div>
 
-                       
+
                         <div className="mt-12 h-32 w-32 bg-white/10 rounded-full blur-3xl absolute -bottom-10 -left-10"></div>
                     </div>
 
-                   
+
                     <div className="bg-gray-50 rounded-2xl p-8 md:p-12 shadow-sm border border-gray-100">
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
@@ -104,9 +111,11 @@ const ContactUs = () => {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-secondary hover:bg-red-800 text-white font-bold py-3 rounded-lg transition duration-300 shadow-md"
+                                disabled={isSubmitting}
+                                className={`w-full font-bold py-3 rounded-lg transition ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-secondary hover:bg-red-800 text-white shadow-md'
+                                    }`}
                             >
-                                Send Message
+                                {isSubmitting ? 'Message Sent' : 'Send Message'}
                             </button>
                         </form>
                     </div>
