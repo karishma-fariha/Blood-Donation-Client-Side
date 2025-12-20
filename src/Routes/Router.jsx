@@ -11,6 +11,7 @@ import DashboardHome from "../Pages/Dashboard/DashboardHome";
 import CreateDonationRequest from "../Pages/Dashboard/CreateDonationRequest";
 import MyDonationRequests from "../Pages/Dashboard/MyDonationRequests";
 import UpdateDonationRequest from "../Pages/Dashboard/UpdateDonationRequest";
+import DonationDetails from "../Pages/Dashboard/DonationDetails";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,12 @@ export const router = createBrowserRouter([
       {
         index: true,
         Component: Home,
+      },
+      {
+
+        path: "donation-details/:id",
+        element: <PrivateRouter><DonationDetails></DonationDetails></PrivateRouter>
+
       }
     ]
   },
@@ -42,32 +49,33 @@ export const router = createBrowserRouter([
     ]
   },
   {
-    path:'/dashboard',
-    element:<PrivateRouter>
+    path: '/dashboard',
+    element: <PrivateRouter>
       <DashboardLayout></DashboardLayout>
-      </PrivateRouter>,
-    children:[
+    </PrivateRouter>,
+    children: [
       {
-        index: true, 
-        element:<DashboardHome></DashboardHome>, 
+        index: true,
+        element: <DashboardHome></DashboardHome>,
       },
       {
-        path:'profile',
-        element:<MyProfile></MyProfile>
+        path: 'profile',
+        element: <MyProfile></MyProfile>
       },
       {
-       path: "create-donation-request",
+        path: "create-donation-request",
         element: <CreateDonationRequest></CreateDonationRequest>
       },
       {
-        path:'my-donation-requests',
-        element:<MyDonationRequests></MyDonationRequests>
+        path: 'my-donation-requests',
+        element: <MyDonationRequests></MyDonationRequests>
       },
       {
-        path:'update-donation-request/:id',
-        element:<UpdateDonationRequest></UpdateDonationRequest>
-      }
-     
+        path: 'update-donation-request/:id',
+        element: <UpdateDonationRequest></UpdateDonationRequest>
+      },
+
+
     ]
   }
 
