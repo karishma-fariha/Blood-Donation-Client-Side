@@ -97,7 +97,7 @@ const Login = () => {
                             Login With Google</button>
 
 
-                        <p className='text-center font-semibold pt-5'>Already Have an Account?<Link className='text-primary' to="/auth/register">Register</Link></p>
+                        <p className='text-center font-semibold pt-5'>Already Have an Account?<Link className='text-primary' to="/register">Register</Link></p>
                     </fieldset>
                 </form>
             </div>

@@ -54,14 +54,14 @@ const Banner = () => {
         
         <div className="flex flex-col sm:flex-row gap-4">
           <Link
-            to='/'
+            to='/register'
             className="px-8 py-3 bg-secondary hover:bg-red-800 text-white font-semibold rounded-full transition duration-300 shadow-lg"
           >
             Join as a donor
           </Link>
           
           <Link 
-            to='/'
+            to='/search'
             className="px-8 py-3 bg-white/40 hover:bg-gray-100 text-secondary font-semibold rounded-full transition duration-300 shadow-lg"
           >
             Search Donors

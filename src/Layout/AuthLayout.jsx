@@ -10,8 +10,8 @@ const AuthLayout = () => {
                 <Navbar></Navbar>
             </div>
             <div className="flex items-center mt-20 gap-10">
-            <div className="w-1/2 flex justify-center items-center"><Outlet></Outlet></div>
-            <div className="w-1/2">
+            <div className="md:w-1/2 flex justify-center items-center"><Outlet></Outlet></div>
+            <div className="md:w-1/2 hidden">
                 <img className='' src={blood} alt="" />
             </div>
             </div>
