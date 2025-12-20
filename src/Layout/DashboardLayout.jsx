@@ -1,0 +1,18 @@
+import React from 'react';
+import { Outlet } from 'react-router';
+import Sidebar from '../Components/Sidebar';
+
+const DashboardLayout = () => {
+    return (
+        <div className="flex flex-col lg:flex-row min-h-screen bg-gray-100">
+            <Sidebar></Sidebar>
+
+            {/* Right Side: Main Content */}
+            <div className="flex-1 p-6 lg:p-10">
+                <Outlet />
+            </div>
+        </div>
+    );
+};
+
+export default DashboardLayout;
