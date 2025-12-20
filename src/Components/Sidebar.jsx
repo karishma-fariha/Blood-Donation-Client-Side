@@ -39,6 +39,7 @@ const Sidebar = () => {
             icon: <FaUser />,
             end: false
         },
+       
     ];
     return (
         <div>
