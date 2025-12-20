@@ -5,7 +5,7 @@ import { NavLink } from 'react-router';
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
 
-    // Toggle Sidebar for Mobile
+    
     const toggleSidebar = () => setIsOpen(!isOpen);
 
     const navLinks = [
@@ -27,14 +27,26 @@ const Sidebar = () => {
             icon: <FaUser />,
             end: false
         },
+        {
+            path: "/dashboard/create-donation-request",
+            label: "Create Donation Request",
+            icon: <FaUser />,
+            end: false
+        },
+        {
+            path: "/dashboard/my-donation-requests",
+            label: "My Donation Request",
+            icon: <FaUser />,
+            end: false
+        },
     ];
     return (
         <div>
-            <div className="lg:hidden flex items-center justify-between bg-red-600 p-4 text-white shadow-md">
+            <div className="lg:hidden flex items-center justify-between bg-secondary p-4 text-white shadow-md">
                 <h1 className="text-xl font-bold">Blood Donor</h1>
                 <button
                     onClick={toggleSidebar}
-                    className="p-2 focus:outline-none hover:bg-red-700 rounded-md transition-colors"
+                    className="p-2 focus:outline-none hover:bg-red-800 rounded-md transition-colors"
                 >
                     {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
                 </button>
@@ -47,7 +59,7 @@ const Sidebar = () => {
             `}>
 
                 <div className="p-6 border-b border-slate-800">
-                    <h2 className="text-2xl font-extrabold text-red-500 tracking-tight">
+                    <h2 className="text-2xl font-extrabold text-secondary tracking-tight">
                         Donor Panel
                     </h2>
                     <p className="text-xs text-gray-400 mt-1 uppercase tracking-widest font-semibold">
@@ -65,7 +77,7 @@ const Sidebar = () => {
                             className={({ isActive }) => `
                                 flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group
                                 ${isActive
-                                    ? "bg-red-600 text-white shadow-lg shadow-red-900/20"
+                                    ? "bg-secondary text-white shadow-lg shadow-red-900/20"
                                     : "text-gray-400 hover:bg-slate-800 hover:text-white"
                                 }
                             `}
@@ -88,7 +100,7 @@ const Sidebar = () => {
                 </div>
             </aside>
 
-            {/* 3. MOBILE OVERLAY (Dark background when sidebar is open) */}
+           
             {isOpen && (
                 <div
                     className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
