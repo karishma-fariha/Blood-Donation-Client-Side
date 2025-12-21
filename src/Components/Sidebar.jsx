@@ -1,46 +1,68 @@
-import React, { useState } from 'react';
-import { FaBars, FaHome, FaSignOutAlt, FaThLarge, FaTimes, FaUser } from 'react-icons/fa';
+import React, { useContext, useEffect, useState } from 'react';
+import { FaUsers, FaHome, FaSignOutAlt, FaThLarge, FaTimes, FaUser, FaPlus, FaList, FaBars } from 'react-icons/fa';
 import { NavLink } from 'react-router';
+import { AuthContext } from '../Provider/AuthContext';
+import axios from 'axios';
 
 const Sidebar = () => {
+    const {user} = useContext(AuthContext)
+    const [dbUser,setDbUser] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
-
-    
     const toggleSidebar = () => setIsOpen(!isOpen);
 
-    const navLinks = [
-        {
-            path: "/",
-            label: "Main Home",
-            icon: <FaHome />,
-            end: false
-        },
-        {
-            path: "/dashboard",
-            label: "Dashboard",
-            icon: <FaThLarge />,
-            end: true 
-        },
-        {
-            path: "/dashboard/profile",
-            label: "My Profile",
-            icon: <FaUser />,
-            end: false
-        },
-        {
-            path: "/dashboard/create-donation-request",
-            label: "Create Donation Request",
-            icon: <FaUser />,
-            end: false
-        },
-        {
-            path: "/dashboard/my-donation-requests",
-            label: "My Donation Request",
-            icon: <FaUser />,
-            end: false
-        },
-       
-    ];
+
+    useEffect(() => {
+        if (user?.email) {
+            axios.get(`http://localhost:5000/users/${user.email}`)
+                .then(res => {
+                    setDbUser(res.data);
+                });
+        }
+    }, [user]);
+
+   
+const navLinks = [
+    {
+        path: "/",
+        label: "Main Home",
+        icon: <FaHome />,
+        end: false
+    },
+    {
+        path: "/dashboard",
+        label: "Dashboard",
+        icon: <FaThLarge />,
+        end: true 
+    },
+    {
+        path: "/dashboard/profile",
+        label: "My Profile",
+        icon: <FaUser />,
+        end: false
+    },
+   
+    ...(dbUser?.role === "Admin" ? [{
+        path: "/dashboard/all-users",
+        label: "All Users",
+        icon: <FaUsers />,
+        end: false
+    }] : []),
+
+   
+    ...((dbUser?.role === "Admin" || dbUser?.role === "volunteer") ? [{
+        path: "/dashboard/create-donation-request",
+        label: "Create Donation Request",
+        icon: <FaPlus />,
+        end: false
+    }] : []),
+
+    {
+        path: "/dashboard/my-donation-requests",
+        label: "My Donation Request",
+        icon: <FaList />,
+        end: false
+    },
+];
     return (
         <div>
             <div className="lg:hidden flex items-center justify-between bg-secondary p-4 text-white shadow-md">
