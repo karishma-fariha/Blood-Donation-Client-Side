@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { FaUsers, FaHome, FaSignOutAlt, FaThLarge, FaTimes, FaUser, FaPlus, FaList, FaBars } from 'react-icons/fa';
+import { FaUsers, FaHome, FaSignOutAlt, FaThLarge, FaTimes, FaUser, FaPlus, FaList, FaBars, FaBlog, FaClipboardList } from 'react-icons/fa';
 import { NavLink } from 'react-router';
 import { AuthContext } from '../Provider/AuthContext';
-import axios from 'axios';
+import useAxiosSecure from '../Hooks/useAxiosSecure';
 
 const Sidebar = () => {
+    const axiosSecure = useAxiosSecure();
     const {user} = useContext(AuthContext)
     const [dbUser,setDbUser] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
@@ -13,12 +14,12 @@ const Sidebar = () => {
 
     useEffect(() => {
         if (user?.email) {
-            axios.get(`http://localhost:5000/users/${user.email}`)
+            axiosSecure.get(`/users/${user.email}`)
                 .then(res => {
                     setDbUser(res.data);
                 });
         }
-    }, [user]);
+    }, [user,axiosSecure]);
 
    
 const navLinks = [
@@ -30,7 +31,7 @@ const navLinks = [
     },
     {
         path: "/dashboard",
-        label: "Dashboard",
+        label: "Dashboard Home",
         icon: <FaThLarge />,
         end: true 
     },
@@ -40,22 +41,45 @@ const navLinks = [
         icon: <FaUser />,
         end: false
     },
-   
-    ...(dbUser?.role === "Admin" ? [{
-        path: "/dashboard/all-users",
-        label: "All Users",
-        icon: <FaUsers />,
-        end: false
-    }] : []),
 
-   
-    ...((dbUser?.role === "Admin" || dbUser?.role === "volunteer") ? [{
+    ...(dbUser?.role === "admin" ? [
+        {
+            path:"/dashboard/admin-home",
+            label:"Admin Overview",
+            icon:<FaUser />,
+            end:false
+        },
+        {
+            path: "/dashboard/all-users",
+            label: "All Users",
+            icon: <FaUsers />,
+            end: false
+        },
+        
+    ] : []),
+
+    ...((dbUser?.role === "admin" || dbUser?.role === "volunteer") ? [
+        {
+            path: "/dashboard/all-donation-requests",
+            label: "All Donation Requests",
+            icon: <FaClipboardList />, 
+            end: false
+        },
+        {
+            path: "/dashboard/content-management",
+            label: "Content Management",
+            icon: <FaBlog />, 
+            end: false
+        }
+    ] : []),
+
+    
+    {
         path: "/dashboard/create-donation-request",
         label: "Create Donation Request",
         icon: <FaPlus />,
         end: false
-    }] : []),
-
+    },
     {
         path: "/dashboard/my-donation-requests",
         label: "My Donation Request",

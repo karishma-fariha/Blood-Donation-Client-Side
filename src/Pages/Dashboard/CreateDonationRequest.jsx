@@ -7,13 +7,14 @@ import { AuthContext } from '../../Provider/AuthContext';
 const CreateDonationRequest = () => {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
-    
+
     const [districts, setDistricts] = useState([]);
     const [upazilas, setUpazilas] = useState([]);
-    const [dbUser, setDbUser] = useState(null); 
+    const [filteredUpazilas, setFilteredUpazilas] = useState([]);
+    const [dbUser, setDbUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-   
+
     useEffect(() => {
         axios.get(`http://localhost:5000/users/${user?.email}`)
             .then(res => {
@@ -21,7 +22,7 @@ const CreateDonationRequest = () => {
                 setLoading(false);
             });
 
-       
+
         fetch('/District.json') // Ensure you have this file in your public folder
             .then(res => res.json())
             .then(data => setDistricts(data));
@@ -31,10 +32,20 @@ const CreateDonationRequest = () => {
             .then(data => setUpazilas(data));
     }, [user]);
 
+
+    const handleDistrictChange = (e) => {
+        const selectedDistrictName = e.target.value;
+        const district = districts.find(d => d.name === selectedDistrictName);
+        if (district) {
+            const filtered = upazilas.filter(u => u.district_id.toString() === district.id.toString());
+            setFilteredUpazilas(filtered);
+        } else {
+            setFilteredUpazilas([]);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Requirement: Blocked user check
         if (dbUser?.status === 'blocked') {
             Swal.fire("Action Denied", "Blocked users cannot create donation requests.", "error");
             return;
@@ -53,7 +64,7 @@ const CreateDonationRequest = () => {
             donationDate: form.donationDate.value,
             donationTime: form.donationTime.value,
             requestMessage: form.requestMessage.value,
-            status: 'pending', 
+            status: 'pending',
             createdAt: new Date()
         };
 
@@ -74,7 +85,7 @@ const CreateDonationRequest = () => {
     return (
         <div className="p-8 max-w-4xl mx-auto bg-white shadow-xl rounded-2xl my-10">
             <h2 className="text-3xl font-bold text-secondary mb-6 text-center">Create Donation Request</h2>
-            
+
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <div className="form-control">
@@ -86,7 +97,7 @@ const CreateDonationRequest = () => {
                     <input type="text" value={user?.email} readOnly className="input input-bordered bg-gray-100" />
                 </div>
 
-              
+
                 <div className="form-control">
                     <label className="label font-semibold">Recipient Name</label>
                     <input type="text" name="recipientName" required className="input input-bordered" placeholder="Enter recipient name" />
@@ -102,10 +113,14 @@ const CreateDonationRequest = () => {
                     </select>
                 </div>
 
-               
+
                 <div className="form-control">
                     <label className="label font-semibold">Recipient District</label>
-                    <select name="district" required className="select select-bordered">
+                    <select
+                        name="district"
+                        required
+                        className="select select-bordered"
+                        onChange={handleDistrictChange}>
                         <option value="">Select District</option>
                         {districts.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
                     </select>
@@ -113,9 +128,13 @@ const CreateDonationRequest = () => {
 
                 <div className="form-control">
                     <label className="label font-semibold">Recipient Upazila</label>
-                    <select name="upazila" required className="select select-bordered">
+                    <select
+                        name="upazila"
+                        required
+                        className="select select-bordered"
+                        disabled={filteredUpazilas.length === 0}>
                         <option value="">Select Upazila</option>
-                        {upazilas.map(u => <option key={u.id} value={u.name}>{u.name}</option>)}
+                        {filteredUpazilas.map(u => <option key={u.id} value={u.name}>{u.name}</option>)}
                     </select>
                 </div>
 
@@ -145,8 +164,8 @@ const CreateDonationRequest = () => {
                 </div>
 
                 <div className="md:col-span-2 mt-4">
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         disabled={dbUser?.status === 'blocked'}
                         className={`btn w-full text-white ${dbUser?.status === 'blocked' ? 'btn-primary' : 'btn-secondary'}`}
                     >

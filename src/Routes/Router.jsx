@@ -13,6 +13,12 @@ import MyDonationRequests from "../Pages/Dashboard/MyDonationRequests";
 import UpdateDonationRequest from "../Pages/Dashboard/UpdateDonationRequest";
 import DonationDetails from "../Pages/Dashboard/DonationDetails";
 import AllUsers from "../AdminDashboard/AllUsers";
+import Search from "../Pages/Search";
+import AllDonationRequests from "../Pages/Dashboard/AllDonationRequests";
+import AdminRoute from "./AdminRoute";
+import AdminHome from "../AdminDashboard/AdminHome";
+import AddBlog from "../VolunteerDashboard/AddBlog";
+import ContentManagement from "../VolunteerDashboard/ContentManagement";
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +28,14 @@ export const router = createBrowserRouter([
       {
         index: true,
         Component: Home,
+      },
+      {
+        path:'search',
+        element:<Search></Search>
+      },
+      {
+        path:'donation-requests',
+        element:<AllDonationRequests></AllDonationRequests>
       },
       {
 
@@ -76,8 +90,24 @@ export const router = createBrowserRouter([
         element: <UpdateDonationRequest></UpdateDonationRequest>
       },
       {
+        path:'admin-home',
+        element:<AdminRoute><AdminHome></AdminHome></AdminRoute>
+      },
+      {
         path:"all-users",
         element:<AllUsers></AllUsers>
+      },
+      {
+        path:"all-donation-requests",
+        element:<AllDonationRequests></AllDonationRequests>
+      },
+      {
+        path:"content-management",
+        element:<ContentManagement></ContentManagement>
+      },
+      {
+        path:'content-management/add-blog',
+        element:<AddBlog></AddBlog>
       }
 
 

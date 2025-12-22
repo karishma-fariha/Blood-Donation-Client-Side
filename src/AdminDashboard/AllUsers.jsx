@@ -1,112 +1,197 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
+import { AuthContext } from '../Provider/AuthContext';
+import useAxiosSecure from '../Hooks/useAxiosSecure';
 
 const AllUsers = () => {
+    const axiosSecure = useAxiosSecure();
+    const { user: currentUser } = useContext(AuthContext); 
     const [users, setUsers] = useState([]);
     const [filter, setFilter] = useState('all');
+    const [loading, setLoading] = useState(true);
 
+    // Fetch users whenever the filter changes
     useEffect(() => {
-        axios.get(`http://localhost:5000/users?status=${filter}`)
-            .then(res => setUsers(res.data));
-    }, [filter]);
+        const fetchUsers = async () => {
+            try {
+                // We don't call setLoading(true) here to avoid the cascading render warning
+                // instead, the filter handler or the initial state handles it.
+                const res = await axiosSecure.get(`/users?status=${filter}`);
+                setUsers(res.data);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+                Swal.fire("Error", "Failed to load users", "error");
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const handleRoleChange = (id, newRole) => {
-        axios.patch(`http://localhost:5000/users/role/${id}`, { role: newRole })
-            .then(res => {
-                if (res.data.modifiedCount > 0) {
-                    setUsers(prevUsers =>
-                        prevUsers.map(user =>
-                            user._id === id ? { ...user, role: newRole } : user
-                        )
-                    );
-                    Swal.fire("Success", `Role updated to ${newRole}`, "success");
-                }
-            });
+        fetchUsers();
+    }, [filter,axiosSecure]);
+
+    // Handler for filter changes
+    const handleFilterChange = (e) => {
+        setLoading(true); // Trigger loading before state change
+        setFilter(e.target.value);
     };
 
-    const handleStatusChange = (id, newStatus) => {
-        axios.patch(`http://localhost:5000/users/status/${id}`, { status: newStatus })
-            .then(res => {
-                if (res.data.modifiedCount > 0) {
-                    setUsers(prevUsers => {
-                        if (filter !== 'all' && newStatus !== filter) {
-                            return prevUsers.filter(user => user._id !== id);
-                        }
-                        return prevUsers.map(user =>
-                            user._id === id ? { ...user, status: newStatus } : user
-                        );
-                    });
-                    Swal.fire("Success", `User is now ${newStatus}`, "success");
+    const handleRoleChange = async (id, newRole, userEmail) => {
+        if (userEmail === currentUser?.email) {
+            return Swal.fire("Action Denied", "You cannot change your own role.", "warning");
+        }
+
+        try {
+            const res = await axiosSecure.patch(`/users/role/${id}`, { role: newRole });
+            if (res.data.modifiedCount > 0) {
+                setUsers(prev => prev.map(u => u._id === id ? { ...u, role: newRole } : u));
+                Swal.fire("Updated!", `User role is now ${newRole}`, "success");
+            }
+        } catch (error) {
+            console.log(error)
+            Swal.fire("Error", "Failed to update role", "error");
+        }
+    };
+
+    const handleStatusChange = async (id, newStatus, userEmail) => {
+        if (userEmail === currentUser?.email) {
+            return Swal.fire("Action Denied", "You cannot block yourself.", "warning");
+        }
+
+        try {
+            const res = await axiosSecure.patch(`/users/status/${id}`, { status: newStatus });
+            if (res.data.modifiedCount > 0) {
+                // If we are in a filtered view, remove the user from the list if they no longer match
+                if (filter !== 'all' && newStatus !== filter) {
+                    setUsers(prev => prev.filter(u => u._id !== id));
+                } else {
+                    setUsers(prev => prev.map(u => u._id === id ? { ...u, status: newStatus } : u));
                 }
-            });
+                Swal.fire("Success!", `User status changed to ${newStatus}`, "success");
+            }
+        } catch (error) {
+         console.log(error)
+            Swal.fire("Error", "Failed to update status", "error");
+        }
     };
 
     return (
-        <div className="p-8">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-3xl font-bold">All Users ({users.length})</h2>
+        <div className="p-4 md:p-8 bg-gray-50 min-h-screen">
+            {/* Header Section */}
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-8 gap-4 bg-white p-6 rounded-2xl shadow-sm">
+                <div>
+                    <h2 className="text-2xl font-extrabold text-gray-800">User Management</h2>
+                    <p className="text-sm text-gray-500 font-medium">Manage permissions and account statuses</p>
+                </div>
 
-                <select className="select select-bordered" onChange={(e) => setFilter(e.target.value)}>
-                    <option value="all">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="blocked">Blocked</option>
-                </select>
+                <div className="flex items-center gap-3">
+                    <label className="text-sm font-bold text-gray-600 uppercase tracking-wider">Status:</label>
+                    <select 
+                        value={filter}
+                        className="select select-bordered select-sm focus:ring-2 focus:ring-red-500 outline-none" 
+                        onChange={handleFilterChange}
+                    >
+                        <option value="all">All Users</option>
+                        <option value="active">Active</option>
+                        <option value="blocked">Blocked</option>
+                    </select>
+                </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-md overflow-x-auto">
-                <table className="table w-full">
-                    <thead className="bg-gray-100">
-                        <tr>
-                            <th>Avatar</th>
-                            <th>Info</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map(u => (
-                            <tr key={u._id}>
-                                <td>
-                                    <div className="avatar">
-                                        <div className="mask mask-squircle w-12 h-12">
-                                            <img src={u.avatar || "https://via.placeholder.com/150"} alt="User" />
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p className="font-bold">{u.name}</p>
-                                    <p className="text-sm opacity-60">{u.email}</p>
-                                </td>
-                                <td>
-                                    <span className={`badge badge-ghost font-semibold ${u.role === 'admin' ? 'text-red-600' : u.role === 'volunteer' ? 'text-blue-600' : ''}`}>
-                                        {u.role}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span className={`badge ${u.status === 'active' ? 'badge-success' : 'badge-error'} text-white`}>
-                                        {u.status}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div className="flex gap-2">
-                                        {/* Role Actions */}
-                                        <button onClick={() => handleRoleChange(u._id, 'admin')} className="btn btn-xs btn-outline btn-error" disabled={u.role === 'admin'}>Make Admin</button>
-                                        <button onClick={() => handleRoleChange(u._id, 'volunteer')} className="btn btn-xs btn-outline btn-info" disabled={u.role === 'volunteer'}>Make Volunteer</button>
+            {/* Content Section */}
+            <div className="max-w-7xl mx-auto">
+                {loading ? (
+                    <div className="flex justify-center items-center h-64">
+                        <span className="loading loading-spinner loading-lg text-red-600"></span>
+                    </div>
+                ) : (
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="table w-full">
+                                <thead className="bg-gray-50">
+                                    <tr className="text-gray-600">
+                                        <th className="py-4">User Details</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th className="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {users.length > 0 ? (
+                                        users.map(u => (
+                                            <tr key={u._id} className="hover:bg-gray-50 transition-colors border-b last:border-0">
+                                                <td className="py-4">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="avatar">
+                                                            <div className="mask mask-squircle w-12 h-12">
+                                                                <img src={u.avatar || "https://i.ibb.co/vBR649p/user-placeholder.png"} alt="User" />
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-bold text-gray-800 flex items-center gap-2">
+                                                                {u.name}
+                                                                {u.email === currentUser?.email && <span className="badge badge-primary badge-xs py-2">YOU</span>}
+                                                            </div>
+                                                            <div className="text-xs text-gray-500">{u.email}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                                                        u.role === 'admin' ? 'bg-red-100 text-red-700' : 
+                                                        u.role === 'volunteer' ? 'bg-blue-100 text-blue-700' : 
+                                                        'bg-gray-100 text-gray-700'
+                                                    }`}>
+                                                        {u.role}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div className={`badge badge-sm font-bold border-none ${u.status === 'active' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
+                                                        {u.status}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="flex justify-center gap-2">
+                                                        {/* Role Toggle Buttons */}
+                                                        <button 
+                                                            onClick={() => handleRoleChange(u._id, 'admin', u.email)} 
+                                                            className="btn btn-xs btn-outline hover:bg-red-600 hover:border-red-600" 
+                                                            disabled={u.role === 'admin' || u.email === currentUser?.email}
+                                                        >Admin</button>
+                                                        
+                                                        <button 
+                                                            onClick={() => handleRoleChange(u._id, 'volunteer', u.email)} 
+                                                            className="btn btn-xs btn-outline hover:bg-blue-600 hover:border-blue-600" 
+                                                            disabled={u.role === 'volunteer' || u.email === currentUser?.email}
+                                                        >Volunteer</button>
 
-                                        {/* Status Actions */}
-                                        {u.status === 'active' ? (
-                                            <button onClick={() => handleStatusChange(u._id, 'blocked')} className="btn btn-xs btn-error text-white">Block</button>
-                                        ) : (
-                                            <button onClick={() => handleStatusChange(u._id, 'active')} className="btn btn-xs btn-success text-white">Unblock</button>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                                        {/* Status Toggle Buttons */}
+                                                        {u.status === 'active' ? (
+                                                            <button 
+                                                                onClick={() => handleStatusChange(u._id, 'blocked', u.email)} 
+                                                                className="btn btn-xs btn-error text-white"
+                                                                disabled={u.email === currentUser?.email}
+                                                            >Block</button>
+                                                        ) : (
+                                                            <button 
+                                                                onClick={() => handleStatusChange(u._id, 'active', u.email)} 
+                                                                className="btn btn-xs btn-success text-white"
+                                                                disabled={u.email === currentUser?.email}
+                                                            >Unblock</button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4" className="text-center py-20 text-gray-400 italic">No users found matching this criteria.</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

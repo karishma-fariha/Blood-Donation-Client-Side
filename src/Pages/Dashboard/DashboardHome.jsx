@@ -1,18 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import { AuthContext } from '../../Provider/AuthContext';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../../Hooks/useAxiosSecure';
 
 const DashboardHome = () => {
+    const axiosSecure = useAxiosSecure();
     const { user } = useContext(AuthContext);
     const [recentRequests, setRecentRequests] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (user?.email) {
-            axios.get(`http://localhost:5000/donation-requests/recent/${user.email}`)
+            axiosSecure.get(`/donation-requests/recent/${user.email}`)
                 .then(res => {
                     setRecentRequests(res.data);
                     setLoading(false);
@@ -35,7 +36,7 @@ const DashboardHome = () => {
             confirmButtonText: "Yes, delete it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete(`http://localhost:5000/donation-requests/${id}`)
+                axiosSecure.delete(`/donation-requests/${id}`)
                     .then(res => {
                         if (res.data.deletedCount > 0) {
                             setRecentRequests(recentRequests.filter(req => req._id !== id));
@@ -47,15 +48,15 @@ const DashboardHome = () => {
     };
 
     const handleStatusUpdate = (id, newStatus) => {
-        axios.patch(`http://localhost:5000/donation-requests/status/${id}`, { status: newStatus })
-            .then(res => {
-                if (res.data.modifiedCount > 0) {
-                    setRecentRequests(recentRequests.map(req => 
-                        req._id === id ? { ...req, status: newStatus } : req
-                    ));
-                    Swal.fire("Success", `Status updated to ${newStatus}`, "success");
-                }
-            });
+        axiosSecure.patch(`/donation-requests/status/${id}`, { status: newStatus })
+        .then(res => {
+            if (res.data.modifiedCount > 0) {
+                setRecentRequests(recentRequests.map(req =>
+                    req._id === id ? { ...req, status: newStatus } : req
+                ));
+                Swal.fire("Success", `Status updated to ${newStatus}`, "success");
+            }
+        });
     };
 
     if (loading) return <div className="text-center mt-20"><span className="loading loading-spinner loading-lg"></span></div>;
@@ -100,11 +101,10 @@ const DashboardHome = () => {
                                             <div className="text-slate-400">{request.donationTime}</div>
                                         </td>
                                         <td>
-                                            <span className={`badge font-semibold ${
-                                                request.status === 'pending' ? 'badge-warning' : 
-                                                request.status === 'inprogress' ? 'badge-info' : 
-                                                request.status === 'done' ? 'badge-success' : 'badge-ghost text-slate-400'
-                                            }`}>
+                                            <span className={`badge font-semibold ${request.status === 'pending' ? 'badge-warning' :
+                                                    request.status === 'inprogress' ? 'badge-info' :
+                                                        request.status === 'done' ? 'badge-success' : 'badge-ghost text-slate-400'
+                                                }`}>
                                                 {request.status}
                                             </span>
                                         </td>
