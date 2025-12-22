@@ -1,7 +1,6 @@
 import React, { use } from 'react';
 import Logo from '../../../Components/Logo/Logo';
 import { Link, NavLink } from 'react-router';
-import userImg from '../../../assets/user.png';
 import ThemeToggle from '../../../Components/ThemeToggle';
 import { AuthContext } from '../../../Provider/AuthContext';
 import { toast } from 'react-toastify';
@@ -21,8 +20,8 @@ const Navbar = () => {
     const links = <>
         <li><NavLink to="/">Home</NavLink></li>
         <li><NavLink to="/donation-requests">Donation Requests</NavLink></li>
-        {user && <li><NavLink to="/funding">Funding</NavLink></li>}       
-         <li><NavLink to="/search">Search </NavLink></li>
+        {user && <li><NavLink to="/funding">Funding</NavLink></li>}
+        <li><NavLink to="/search">Search </NavLink></li>
 
 
 
@@ -54,7 +53,10 @@ const Navbar = () => {
                             role="button"
                             className="btn btn-ghost btn-circle avatar">
                             <div className="md:w-10 w-7 rounded-full">
-                                <img src={userImg} alt="User" />
+                                {/* src={`${user? user.photoURL : userImg}`} */}
+                                <img 
+                                className='w-12 h-12 rounded-full' 
+                                src={`${user?.photoURL }`} alt="User" />
                             </div>
                         </div>
                         <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[50px] w-52 p-2 shadow-sm mt-3 border border-gray-100 text-secondary font-bold">
