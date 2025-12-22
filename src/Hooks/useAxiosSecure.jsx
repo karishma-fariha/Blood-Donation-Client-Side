@@ -1,11 +1,11 @@
 import axios from "axios";
 import { useContext, useEffect } from "react";
-import { useNavigate } from "react-router"; 
+import { useNavigate } from "react-router";
 import { AuthContext } from "../Provider/AuthContext";
 import { toast } from "react-toastify";
 
 const axiosSecure = axios.create({
-    baseURL: 'http://localhost:5000'
+    baseURL: 'https://blood-donation-server-side-ten.vercel.app'
 });
 
 const useAxiosSecure = () => {
@@ -27,7 +27,7 @@ const useAxiosSecure = () => {
             return response;
         }, async (error) => {
             const status = error.response?.status;
-            
+
             if (status === 401 || status === 403) {
                 await logout();
                 localStorage.removeItem('access-token'); // Safety cleanup

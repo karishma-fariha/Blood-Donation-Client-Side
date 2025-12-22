@@ -3,15 +3,15 @@ import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndP
 import { auth, AuthContext, googleProvider } from './AuthContext';
 import axios from 'axios';
 
-const AuthProvider = ({children}) => {
-    const [user,setUser] =useState({})
-        const [loading, setLoading] = useState(true);
-      const [emailForReset, setEmailForReset] = useState(""); 
+const AuthProvider = ({ children }) => {
+    const [user, setUser] = useState({})
+    const [loading, setLoading] = useState(true);
+    const [emailForReset, setEmailForReset] = useState("");
 
     // console.log(user,loading)
 
     // forget password
-    
+
 
     // login with google
     const googleLogin = () => {
@@ -47,18 +47,18 @@ const AuthProvider = ({children}) => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
             if (currentUser) {
-            // Get token and store it
-            const userInfo = { email: currentUser.email };
-            axios.post('http://localhost:5000/jwt', userInfo)
-                .then(res => {
-                    if (res.data.token) {
-                        localStorage.setItem('access-token', res.data.token);
-                    }
-                })
-        } else {
-            // Remove token if user logs out
-            localStorage.removeItem('access-token');
-        }
+                // Get token and store it
+                const userInfo = { email: currentUser.email };
+                axios.post('https://blood-donation-server-side-ten.vercel.app/jwt', userInfo)
+                    .then(res => {
+                        if (res.data.token) {
+                            localStorage.setItem('access-token', res.data.token);
+                        }
+                    })
+            } else {
+                // Remove token if user logs out
+                localStorage.removeItem('access-token');
+            }
             setLoading(false);
         });
         return () => {

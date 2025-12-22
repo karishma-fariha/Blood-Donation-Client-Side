@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { FaUsers, FaHome, FaSignOutAlt, FaThLarge, FaTimes, FaUser, FaPlus, FaList, FaBars, FaBlog, FaClipboardList } from 'react-icons/fa';
+import { FaUsers, FaHome, FaSignOutAlt, FaThLarge, FaTimes, FaUser, FaPlus, FaList, FaBars, FaBlog, FaClipboardList, FaUsersCog, FaEdit, FaListAlt, FaPlusCircle } from 'react-icons/fa';
 import { NavLink } from 'react-router';
 import { AuthContext } from '../Provider/AuthContext';
 import useAxiosSecure from '../Hooks/useAxiosSecure';
@@ -29,12 +29,24 @@ const navLinks = [
         icon: <FaHome />,
         end: false
     },
-    {
-        path: "/dashboard",
-        label: "Dashboard Home",
-        icon: <FaThLarge />,
-        end: true 
-    },
+
+    ...(dbUser?.role === "admin" ? [
+        {
+            path: "/dashboard/admin-home",
+            label: "Admin Overview",
+            icon: <FaThLarge />,
+            end: true 
+        }
+    ] : [
+        {
+            path: "/dashboard", 
+            label: "Dashboard Home",
+            icon: <FaThLarge />,
+            end: true 
+        }
+    ]),
+
+    
     {
         path: "/dashboard/profile",
         label: "My Profile",
@@ -42,22 +54,17 @@ const navLinks = [
         end: false
     },
 
+    
     ...(dbUser?.role === "admin" ? [
-        {
-            path:"/dashboard/admin-home",
-            label:"Admin Overview",
-            icon:<FaUser />,
-            end:false
-        },
         {
             path: "/dashboard/all-users",
             label: "All Users",
-            icon: <FaUsers />,
+            icon: <FaUsersCog />,
             end: false
         },
-        
     ] : []),
 
+    
     ...((dbUser?.role === "admin" || dbUser?.role === "volunteer") ? [
         {
             path: "/dashboard/all-donation-requests",
@@ -68,22 +75,22 @@ const navLinks = [
         {
             path: "/dashboard/content-management",
             label: "Content Management",
-            icon: <FaBlog />, 
+            icon: <FaEdit />, 
             end: false
         }
     ] : []),
 
     
     {
-        path: "/dashboard/create-donation-request",
-        label: "Create Donation Request",
-        icon: <FaPlus />,
+        path: "/dashboard/my-donation-requests",
+        label: "My Donation Requests",
+        icon: <FaListAlt />,
         end: false
     },
     {
-        path: "/dashboard/my-donation-requests",
-        label: "My Donation Request",
-        icon: <FaList />,
+        path: "/dashboard/create-donation-request",
+        label: "Create Donation Request",
+        icon: <FaPlusCircle />,
         end: false
     },
 ];

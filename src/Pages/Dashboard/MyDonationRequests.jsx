@@ -1,11 +1,13 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { AuthContext } from '../../Provider/AuthContext';
+import useAxiosSecure from '../../Hooks/useAxiosSecure';
 
 const MyDonationRequests = () => {
+        const axiosSecure = useAxiosSecure();
+
     const { user } = useContext(AuthContext);
     const [requests, setRequests] = useState([]);
     const [count, setCount] = useState(0);
@@ -17,12 +19,12 @@ const MyDonationRequests = () => {
     const pages = [...Array(numberOfPages).keys()];
 
     const fetchRequests = useCallback(() => {
-        axios.get(`http://localhost:5000/donation-requests/my-requests/${user?.email}?page=${currentPage}&size=${itemsPerPage}&status=${filterStatus}`)
+        axiosSecure.get(`/donation-requests/my-requests/${user?.email}?page=${currentPage}&size=${itemsPerPage}&status=${filterStatus}`)
             .then(res => {
                 setRequests(res.data.result);
                 setCount(res.data.count);
             });
-    }, [user?.email, currentPage, itemsPerPage, filterStatus]);
+    }, [user?.email, currentPage, itemsPerPage, filterStatus,axiosSecure]);
 
     useEffect(() => {
         if (user?.email) {
@@ -32,7 +34,7 @@ const MyDonationRequests = () => {
 
     
     const handleStatusUpdate = (id, newStatus) => {
-        axios.patch(`http://localhost:5000/donation-requests/status/${id}`, { status: newStatus })
+        axiosSecure.patch(`/donation-requests/status/${id}`, { status: newStatus })
             .then(res => {
                 if (res.data.modifiedCount > 0) {
                     fetchRequests();

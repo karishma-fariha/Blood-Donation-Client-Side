@@ -6,7 +6,7 @@ const Search = () => {
     const [searching, setSearching] = useState(false);
     const [districts, setDistricts] = useState([]);
     const [upazilas, setUpazilas] = useState([]);
-    const [filteredUpazilas, setFilteredUpazilas] = useState([]); 
+    const [filteredUpazilas, setFilteredUpazilas] = useState([]);
 
     useEffect(() => {
         fetch('/District.json').then(res => res.json()).then(data => setDistricts(data));
@@ -16,9 +16,9 @@ const Search = () => {
 
     const handleDistrictChange = (e) => {
         const selectedDistrictName = e.target.value;
-        
+
         const district = districts.find(d => d.name === selectedDistrictName);
-        
+
         if (district) {
             const filtered = upazilas.filter(u => u.district_id === district.id);
             setFilteredUpazilas(filtered);
@@ -35,7 +35,7 @@ const Search = () => {
         const district = form.district.value;
         const upazila = form.upazila.value;
 
-        const res = await axios.get(`http://localhost:5000/donor-search?bloodGroup=${bloodGroup}&district=${district}&upazila=${upazila}`);
+        const res = await axios.get(`https://blood-donation-server-side-ten.vercel.app/donor-search?bloodGroup=${bloodGroup}&district=${district}&upazila=${upazila}`);
         setDonors(res.data);
         setSearching(false);
     };
@@ -75,7 +75,7 @@ const Search = () => {
                 </form>
             </div>
 
-           
+
             {searching ? (
                 <div className="text-center"><span className="loading loading-spinner loading-lg text-red-600"></span></div>
             ) : (

@@ -23,7 +23,7 @@ const DashboardHome = () => {
                     setLoading(false);
                 });
         }
-    }, [user]);
+    }, [user,axiosSecure]);
 
     const handleDelete = (id) => {
         Swal.fire({

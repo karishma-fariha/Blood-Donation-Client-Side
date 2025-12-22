@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router';
 import { AuthContext } from '../../Provider/AuthContext';
+import useAxiosSecure from '../../Hooks/useAxiosSecure';
 
 const CreateDonationRequest = () => {
+     const axiosSecure = useAxiosSecure();
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -16,21 +17,21 @@ const CreateDonationRequest = () => {
 
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/users/${user?.email}`)
+        axiosSecure.get(`/users/${user?.email}`)
             .then(res => {
                 setDbUser(res.data);
                 setLoading(false);
             });
 
 
-        fetch('/District.json') // Ensure you have this file in your public folder
+        fetch('/District.json') 
             .then(res => res.json())
             .then(data => setDistricts(data));
 
         fetch('/Upozila.json')
             .then(res => res.json())
             .then(data => setUpazilas(data));
-    }, [user]);
+    }, [user,axiosSecure]);
 
 
     const handleDistrictChange = (e) => {
@@ -69,7 +70,7 @@ const CreateDonationRequest = () => {
         };
 
         try {
-            const res = await axios.post('http://localhost:5000/donation-requests', requestData);
+            const res = await axiosSecure.post('/donation-requests', requestData);
             if (res.data.insertedId) {
                 Swal.fire("Success!", "Donation request created.", "success");
                 navigate('/dashboard/my-donation-requests');

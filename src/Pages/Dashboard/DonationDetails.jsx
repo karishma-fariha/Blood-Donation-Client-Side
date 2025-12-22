@@ -1,18 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import axios from 'axios';
 import { AuthContext } from '../../Provider/AuthContext';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../../Hooks/useAxiosSecure';
 
 const DonationDetails = () => {
+    const axiosSecure = useAxiosSecure();
     const { id } = useParams();
     const { user } = useContext(AuthContext);
     const [request, setRequest] = useState(null);
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/donation-request/${id}`)
+        axiosSecure.get(`/donation-request/${id}`)
             .then(res => setRequest(res.data));
-    }, [id]);
+    }, [id,axiosSecure]);
 
     const handleConfirmDonation = async (e) => {
         e.preventDefault();
@@ -24,7 +25,7 @@ const DonationDetails = () => {
         };
 
         try {
-            const res = await axios.patch(`http://localhost:5000/donation-requests/donate/${id}`, donorInfo);
+            const res = await axiosSecure.patch(`/donation-requests/donate/${id}`, donorInfo);
             if (res.data.modifiedCount > 0) {
                 document.getElementById('donate_modal').close();
                 setRequest({

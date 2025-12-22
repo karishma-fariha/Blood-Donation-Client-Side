@@ -16,22 +16,22 @@ const Register = () => {
     const [selectedDistrict, setSelectedDistrict] = useState("");
     const [selectedUpazila, setSelectedUpazila] = useState("");
 
-    
+
     useEffect(() => {
         axios.get('/District.json').then(res => setDistricts(res.data));
         axios.get('/Upozila.json').then(res => setAllUpazilas(res.data));
     }, []);
 
-    
+
     const filteredUpazilas = allUpazilas.filter(u => {
         const districtObj = districts.find(d => d.name === selectedDistrict);
         return districtObj ? u.district_id === districtObj.id : false;
     });
 
-    
+
     const handleDistrictChange = (e) => {
         setSelectedDistrict(e.target.value);
-        setSelectedUpazila(""); 
+        setSelectedUpazila("");
     };
 
 
@@ -104,14 +104,14 @@ const Register = () => {
 
 
             createUser(email, password)
-            .then(() => {
-                updateUser({ displayName: name, photoURL: mainPhotoUrl }).then(() => {
-                    axios.post('http://localhost:5000/users', formData).then(() => {
-                        toast.success("Registration Successful!");
-                        navigate('/');
+                .then(() => {
+                    updateUser({ displayName: name, photoURL: mainPhotoUrl }).then(() => {
+                        axios.post('https://blood-donation-server-side-ten.vercel.app/users', formData).then(() => {
+                            toast.success("Registration Successful!");
+                            navigate('/');
+                        });
                     });
                 });
-            });
         } catch (err) {
             console.error(err);
             toast.error("Something went wrong!");

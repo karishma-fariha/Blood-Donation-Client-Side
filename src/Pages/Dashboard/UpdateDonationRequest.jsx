@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import axios from 'axios';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../../Hooks/useAxiosSecure';
 
 const UpdateDonationRequest = () => {
+        const axiosSecure = useAxiosSecure();
+
     const { id } = useParams(); 
     const navigate = useNavigate();
     const [request, setRequest] = useState(null);
@@ -12,13 +14,13 @@ const UpdateDonationRequest = () => {
 
     useEffect(() => {
         
-        axios.get(`http://localhost:5000/donation-request/${id}`)
+        axiosSecure.get(`/donation-request/${id}`)
             .then(res => setRequest(res.data));
 
         
         fetch('/District.json').then(res => res.json()).then(data => setDistricts(data));
         fetch('/Upozila.json').then(res => res.json()).then(data => setUpazilas(data));
-    }, [id]);
+    }, [id,axiosSecure]);
 
     const handleUpdate = async (e) => {
         e.preventDefault();
@@ -37,7 +39,7 @@ const UpdateDonationRequest = () => {
         };
 
         try {
-            const res = await axios.patch(`http://localhost:5000/update-donation-request/${id}`, updatedInfo);
+            const res = await axiosSecure.patch(`/update-donation-request/${id}`, updatedInfo);
             if (res.data.modifiedCount > 0) {
                 Swal.fire("Success!", "Request updated successfully", "success");
                 navigate('/dashboard/my-donation-requests');

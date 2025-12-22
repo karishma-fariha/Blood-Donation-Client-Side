@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../Provider/AuthContext';
 import { toast } from 'react-toastify';
 import { updateProfile } from 'firebase/auth';
-import axios from 'axios';
+import useAxiosSecure from '../../Hooks/useAxiosSecure';
 
 const MyProfile = () => {
+    const axiosSecure = useAxiosSecure();
     const { user } = useContext(AuthContext);
     const [isEditable, setIsEditable] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -21,7 +22,7 @@ const MyProfile = () => {
 
    useEffect(() => {
     if (user?.email) {
-        axios.get(`http://localhost:5000/users/${user.email}`)
+        axiosSecure.get(`/users/${user.email}`)
             .then(res => {
                 
                 setFormData({
@@ -45,7 +46,7 @@ const MyProfile = () => {
                 }));
             });
     }
-}, [user]);
+}, [user,axiosSecure]);
 
     const handleSave = async (e) => {
         e.preventDefault();
@@ -55,7 +56,7 @@ const MyProfile = () => {
                 displayName: formData.name,
                 photoURL: formData.avatar,
             });
-            const response = await axios.patch(`http://localhost:5000/users/${user.email}`, formData);
+            const response = await axiosSecure.patch(`/users/${user.email}`, formData);
 
             if (response.data.modifiedCount > 0 || response.data.upsertedCount > 0) {
                 toast("Profile updated successfully!");

@@ -19,6 +19,7 @@ import AdminRoute from "./AdminRoute";
 import AdminHome from "../AdminDashboard/AdminHome";
 import AddBlog from "../VolunteerDashboard/AddBlog";
 import ContentManagement from "../VolunteerDashboard/ContentManagement";
+import Funding from "../Pages/Funding";
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
         path: "donation-details/:id",
         element: <PrivateRouter><DonationDetails></DonationDetails></PrivateRouter>
 
+      },
+      {
+        path:'funding',
+        element:<PrivateRouter><Funding></Funding></PrivateRouter>
       }
     ]
   },

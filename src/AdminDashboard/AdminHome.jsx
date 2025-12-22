@@ -18,7 +18,7 @@ const AdminHome = () => {
             <h2 className="text-3xl font-bold mb-8">Welcome back, Admin!</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                
+
                 {/* Total Users Card */}
                 <div className="stats shadow bg-white border-l-4 border-blue-500">
                     <div className="stat">
@@ -42,7 +42,18 @@ const AdminHome = () => {
                         <div className="stat-desc">Ever Created</div>
                     </div>
                 </div>
-
+                {/* revenue card */}
+                <div className="stats shadow bg-white border-l-4 border-purple-500">
+                    <div className="stat">
+                        <div className="stat-figure text-purple-500 text-3xl">
+                            <FaFileAlt />
+                        </div>
+                        <div className="stat-title">Total Revenue</div>
+                        <div className="stat-value text-purple-500">${stats.totalRevenue}</div>
+                        <div className="stat-desc">From all donor fundings</div>
+                    </div>
+                </div>
+                
                 {/* Successful Donations Card */}
                 <div className="stats shadow bg-white border-l-4 border-green-500">
                     <div className="stat">
