@@ -14,12 +14,17 @@ import UpdateDonationRequest from "../Pages/Dashboard/UpdateDonationRequest";
 import DonationDetails from "../Pages/Dashboard/DonationDetails";
 import AllUsers from "../AdminDashboard/AllUsers";
 import Search from "../Pages/Search";
-import AllDonationRequests from "../Pages/Dashboard/AllDonationRequests";
+import AllDonationRequests from "../Pages/Dashboard/GlobalMissions";
 import AdminRoute from "./AdminRoute";
 import AdminHome from "../AdminDashboard/AdminHome";
 import AddBlog from "../VolunteerDashboard/AddBlog";
 import ContentManagement from "../VolunteerDashboard/ContentManagement";
 import Funding from "../Pages/Funding";
+import NotFound from "../Pages/NotFound";
+import Inventory from "../Pages/Inventory";
+import FieldOps from "../Pages/FieldOps";
+import SystemSpecs from "../Pages/SystemSpecs";
+import GlobalMissions from "../Pages/Dashboard/GlobalMissions";
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +38,18 @@ export const router = createBrowserRouter([
       {
         path:'search',
         element:<Search></Search>
+      },
+      {
+        path:'inventory',
+        element:<Inventory></Inventory>
+      },
+      {
+        path:'field-op',
+        element:<FieldOps></FieldOps>
+      },
+      {
+        path:'system-specs',
+        element:<SystemSpecs></SystemSpecs>
       },
       {
         path:'donation-requests',
@@ -104,7 +121,7 @@ export const router = createBrowserRouter([
       },
       {
         path:"all-donation-requests",
-        element:<AllDonationRequests></AllDonationRequests>
+        element:<GlobalMissions></GlobalMissions>
       },
       {
         path:"content-management",
@@ -117,6 +134,10 @@ export const router = createBrowserRouter([
 
 
     ]
+  },
+  {
+    path:'/*',
+    element:<NotFound></NotFound>
   }
 
 ]);

@@ -1,26 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
-@plugin "daisyui";
 
+@plugin "daisyui" {
+  themes: light --default, dark;
+}
+
+/* 1. Define variables for both Light and Dark mode */
+:root {
+  /* Industrial Light Colors */
+  --p-hex: #1e293b;        /* Deep Slate */
+  --s-hex: #dc2626;        /* Blood Red */
+  --a-hex: #64748b;        /* Gray */
+  --b1-hex: #ffffff;       /* Background */
+  --bc-hex: #0f172a;       /* Text */
+}
+
+[data-theme="dark"] {
+  /* Industrial Dark Colors */
+  --p-hex: #f1f5f9;        /* Off-white */
+  --s-hex: #ef4444;        /* Bright Red */
+  --a-hex: #94a3b8;        /* Slate Gray */
+  --b1-hex: #0f172a;       /* Deep Navy */
+  --bc-hex: #f8fafc;       /* Text */
+}
+
+/* 2. Map variables to Tailwind utilities (This kills the Pink) */
+@theme {
+  --font-sans: "Urbanist", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --color-primary: var(--p-hex);
+  --color-secondary: var(--s-hex);
+  --color-accent: var(--a-hex);
+  --color-base-100: var(--b1-hex);
+  --color-base-content: var(--bc-hex);
+}
+
+/* 3. Map variables to DaisyUI components (light) */
 @plugin "daisyui/theme" {
   name: "light";
-  default: true;
-   /* black */
-  --color-primary: #403F3F; 
-  /* red  */
-  --color-secondary: #d32f2f;
-  --color-base-200: #F3F3F3;
-  --color-base-300: #e7e7e7;
-  /* gray */
-  --color-accent: #706F6F;
+  --color-primary: var(--p-hex);
+  --color-secondary: var(--s-hex);
+  --color-accent: var(--a-hex);
+  --color-base-100: var(--b1-hex);
+  --color-base-content: var(--bc-hex);
 }
+
+/* 4. Map variables to DaisyUI components (dark) */
 @plugin "daisyui/theme" {
   name: "dark";
-  default: true;
-
-  --color-primary: #403F3F;
-  --color-secondary:#d32f2f;
-  /* --color-base-200: #F3F3F3;
-  --color-base-300: #e7e7e7;
-  --color-accent: #706F6F; */
+  --color-primary: var(--p-hex);
+  --color-secondary: var(--s-hex);
+  --color-accent: var(--a-hex);
+  --color-base-100: var(--b1-hex);
+  --color-base-content: var(--bc-hex);
 }
 
+/* 5. Marquee Animations (Kept exactly as yours) */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.33%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

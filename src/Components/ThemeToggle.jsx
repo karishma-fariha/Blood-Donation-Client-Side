@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiSun, FiMoon } from "react-icons/fi";
+import { motion } from "framer-motion";
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState(
@@ -17,18 +18,33 @@ export default function ThemeToggle() {
   }, [theme]);
 
   return (
-    <label className="swap swap-rotate cursor-pointer text-2xl">
-      <input
-        type="checkbox"
-        onChange={toggleTheme}
-        checked={theme === "dark"}
-      />
+    <motion.div 
+      whileTap={{ scale: 0.9, rotate: 15 }} 
+      className="flex items-center justify-center"
+    >
+      <label className="swap swap-rotate cursor-pointer">
+        {/* this hidden checkbox controls the state */}
+        <input
+          type="checkbox"
+          className="hidden"
+          onChange={toggleTheme}
+          checked={theme === "dark"}
+        />
 
-      {/* Light mode icon */}
-      <FiSun size={30} className="swap-on" />
+        {/* Moon Icon: Visible when 'checked' (Dark Mode) */}
+        <FiMoon 
+          className={`swap-on w-6 h-6 md:w-7 md:h-7 transition-colors duration-300 ${
+            theme === "dark" ? "text-yellow-400" : "text-slate-700"
+          }`} 
+        />
 
-      {/* Dark mode icon */}
-      <FiMoon size={30} className="swap-off" />
-    </label>
+        {/* Sun Icon: Visible when 'unchecked' (Light Mode) */}
+        <FiSun 
+          className={`swap-off w-6 h-6 md:w-7 md:h-7 transition-colors duration-300 ${
+            theme === "light" ? "text-orange-500" : "text-slate-400"
+          }`} 
+        />
+      </label>
+    </motion.div>
   );
 }
